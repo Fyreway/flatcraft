@@ -3,14 +3,27 @@
 
 #include <SDL.h>
 #include <SDL_render.h>
+#include <vec/vec.h>
+
+#include "player.h"
 
 typedef struct {
     SDL_Window *win;
     SDL_Renderer *rend;
+    SDL_Texture *atlas;
 } SdlState;
 
-SdlState init();
+typedef struct {
+    Player player;
+} GameState;
 
-void cleanup(SdlState *state);
+typedef struct {
+    SdlState sdl_state;
+    GameState game_state;
+} State;
+
+State init();
+
+void cleanup(State *state);
 
 #endif
