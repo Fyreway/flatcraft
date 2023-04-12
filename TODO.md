@@ -1,6 +1,6 @@
 FlatCraft TODO:
-~~- Debug chunk rendering~~
-  ~~* Currently chunks render over each other, idk why~~
+- ~~Debug chunk rendering~~
+  * ~~Currently chunks render over each other, idk why~~
 - World generation
   * Should be a 1d smooth noise function for terrain
   * Determines grass and dirt level
