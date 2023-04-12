@@ -3,7 +3,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-#include "chunk.hpp"
+#include "player.hpp"
 #include "util.hpp"
 
 #define SCALE 4
@@ -17,8 +17,10 @@ SDL_Rect get_block_texture(flat::Block::Type type) {
 
 SDL_Rect get_block_render_pos(const flat::State &state,
                               const flat::Block &block) {
-    return {(block.x * SCALE - state.player.x) * 16 + WIDTH / 2,
-            (block.y * SCALE - state.player.y) * 16 + HEIGHT / 2,
+    return {static_cast<int>(std::round((block.x - state.player.x) * 16 * SCALE)
+                             + WIDTH / 2),
+            static_cast<int>(std::round((block.y - state.player.y) * 16 * SCALE)
+                             + HEIGHT / 2),
             16 * SCALE,
             16 * SCALE};
 }
@@ -42,8 +44,9 @@ void flat::render(flat::State &state) {
     SDL_SetRenderDrawColor(state.rend, 100, 203, 255, 0);
     SDL_RenderClear(state.rend);
 
-    for (auto const &chunk : state.chunks)
-        for (auto const &block : chunk->blocks) render_block(state, block);
+    for (std::size_t idx : state.player.near_chunks)
+        for (auto const &block : state.chunks.at(idx)->blocks)
+            render_block(state, block);
 
     render_player(state);
 

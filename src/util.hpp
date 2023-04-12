@@ -16,6 +16,6 @@
 
 namespace util {
     void error_sdl(const std::string &proc);
-}
+}  // namespace util
 
 #endif

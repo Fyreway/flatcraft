@@ -6,7 +6,7 @@
 #include "player.hpp"
 #include "util.hpp"
 
-flat::State::State() : player(0, 0) {
+flat::State::State() {
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) util::error_sdl("SDL init");
     if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
         util::error_sdl("SDL_image init");
@@ -31,6 +31,8 @@ flat::State::State() : player(0, 0) {
 
     for (range(5))
         chunks.push_back(std::make_unique<Chunk>(Chunk::build_flat(i, 0)));
+
+    player = Player(0, 0, chunks);
 }
 
 flat::State::~State() {
@@ -41,3 +43,5 @@ flat::State::~State() {
     SDL_Quit();
     IMG_Quit();
 }
+
+void flat::update(State &state) { state.player.update(state.chunks); }

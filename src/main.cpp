@@ -8,7 +8,8 @@ int main(void) {
     bool running = true;
 
     while (running) {
-        handle_events(running, state);
-        render(state);
+        flat::handle_events(running, state);
+        flat::update(state);
+        flat::render(state);
     }
 }

@@ -1,13 +1,9 @@
 #ifndef __STATE_H__
 #define __STATE_H__
 
-#include <memory>
-#include <vector>
-
 #include <SDL.h>
 #include <SDL_render.h>
 
-#include "chunk.hpp"
 #include "player.hpp"
 
 #define WIDTH  800
@@ -26,6 +22,8 @@ namespace flat {
         State();
         ~State();
     };
+
+    void update(State &state);
 }  // namespace flat
 
 #endif
