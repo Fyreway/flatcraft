@@ -10,6 +10,9 @@
 #include "chunk.hpp"
 #include "player.hpp"
 
+#define WIDTH  800
+#define HEIGHT 600
+
 namespace flat {
     class State {
     public:
@@ -18,7 +21,7 @@ namespace flat {
 
         SDL_Window *win;
         SDL_Renderer *rend;
-        SDL_Texture *atlas;
+        SDL_Texture *atlas, *steve;
 
         State();
         ~State();

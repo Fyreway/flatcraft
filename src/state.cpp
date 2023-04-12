@@ -14,8 +14,8 @@ flat::State::State() : player(0, 0) {
     win = SDL_CreateWindow("flatcraft",
                            SDL_WINDOWPOS_CENTERED,
                            SDL_WINDOWPOS_CENTERED,
-                           800,
-                           600,
+                           WIDTH,
+                           HEIGHT,
                            0);
     if (win == nullptr) util::error_sdl("window creation");
 
@@ -27,6 +27,7 @@ flat::State::State() : player(0, 0) {
 
     // TODO: normalize path
     atlas = IMG_LoadTexture(rend, "../res/terrain.png");
+    steve = IMG_LoadTexture(rend, "../res/steve.png");
 
     for (range(5))
         chunks.push_back(std::make_unique<Chunk>(Chunk::build_flat(i, 0)));
