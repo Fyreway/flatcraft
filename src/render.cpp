@@ -17,12 +17,13 @@ SDL_Rect get_block_texture(flat::Block::Type type) {
 
 SDL_Rect get_block_render_pos(const flat::State &state,
                               const flat::Block &block) {
-    return {static_cast<int>(std::round((block.x - state.player.x) * 16 * SCALE)
-                             + WIDTH / 2),
-            static_cast<int>(std::round((block.y - state.player.y) * 16 * SCALE)
-                             + HEIGHT / 2),
-            16 * SCALE,
-            16 * SCALE};
+    return {
+        static_cast<int>(std::round((block.x - state.player.x) * 16 * SCALE))
+            + WIDTH / 2,
+        static_cast<int>(std::round((block.y - state.player.y) * 16 * SCALE))
+            + HEIGHT / 2,
+        16 * SCALE,
+        16 * SCALE};
 }
 
 void render_block(flat::State &state, const flat::Block &block) {
