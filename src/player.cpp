@@ -2,30 +2,34 @@
 
 #include <cmath>
 
-#include "util.hpp"
-
-std::vector<std::size_t> get_near_chunks(
-    const std::vector<std::unique_ptr<flat::Chunk>> &chunks,
+std::vector<std::pair<int, int>> get_near_chunks(
+    const std::unordered_map<std::pair<int, int>,
+                             std::unique_ptr<flat::Chunk>,
+                             util::pair_hash> &chunks,
     const flat::Player &player) {
-    std::vector<std::size_t> indices;
-    for (range(chunks.size())) {
-        auto const &chunk = chunks.at(i);
-        if (std::abs(chunk->x - player.chunk_x) < 3
-            && std::abs(chunk->y - player.chunk_y) < 3)
-            indices.push_back(i);
+    std::vector<std::pair<int, int>> indices;
+    for (auto const &[coords, chunk] : chunks) {
+        auto const &[x, y] = coords;
+        if (std::abs(x - player.chunk_x) < 3
+            && std::abs(y - player.chunk_y) < 3)
+            indices.push_back(coords);
     }
     return indices;
 }
 
 flat::Player::Player(double x,
                      double y,
-                     const std::vector<std::unique_ptr<Chunk>> &chunks)
+                     const std::unordered_map<std::pair<int, int>,
+                                              std::unique_ptr<flat::Chunk>,
+                                              util::pair_hash> &chunks)
     : x(x),
       y(-y) {
     update(chunks);
 }
 
-void flat::Player::update(const std::vector<std::unique_ptr<Chunk>> &chunks) {
+void flat::Player::update(const std::unordered_map<std::pair<int, int>,
+                                                   std::unique_ptr<Chunk>,
+                                                   util::pair_hash> &chunks) {
     vert_vel += gravity;
     y += vert_vel;
 

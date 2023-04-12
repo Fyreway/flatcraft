@@ -2,9 +2,10 @@
 #define __UTIL_H__
 
 #include <string>
+#include <utility>
 
 #define range_enum(name, start, end, step) \
-    unsigned long name = (start);          \
+    int name = (start);                    \
     name < (end);                          \
     name += (step)
 
@@ -16,6 +17,13 @@
 
 namespace util {
     void error_sdl(const std::string &proc);
+
+    struct pair_hash {
+        template<class T1, class T2>
+        std::size_t operator()(const std::pair<T1, T2> &pair) const {
+            return std::hash<T1>()(pair.first) ^ std::hash<T2>()(pair.second);
+        }
+    };
 }  // namespace util
 
 #endif

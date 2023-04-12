@@ -16,19 +16,24 @@ SDL_Rect get_block_texture(flat::Block::Type type) {
 }
 
 SDL_Rect get_block_render_pos(const flat::State &state,
-                              const flat::Block &block) {
-    return {
-        static_cast<int>(std::round((block.x - state.player.x) * 16 * SCALE))
-            + WIDTH / 2,
-        static_cast<int>(std::round((-block.y - state.player.y) * 16 * SCALE))
-            + HEIGHT / 2,
-        16 * SCALE,
-        16 * SCALE};
+                              const flat::Block &block,
+                              const std::pair<int, int> &chunk) {
+    const auto &[x, y] = chunk;
+    return {static_cast<int>(
+                std::round((x * 8 + block.x - state.player.x) * 16 * SCALE))
+                + WIDTH / 2,
+            static_cast<int>(
+                std::round((-y * 8 - block.y - state.player.y) * 16 * SCALE))
+                + HEIGHT / 2,
+            16 * SCALE,
+            16 * SCALE};
 }
 
-void render_block(flat::State &state, const flat::Block &block) {
+void render_block(flat::State &state,
+                  const flat::Block &block,
+                  const std::pair<int, int> &chunk) {
     SDL_Rect src = get_block_texture(block.type);
-    SDL_Rect dst = get_block_render_pos(state, block);
+    SDL_Rect dst = get_block_render_pos(state, block, chunk);
 #define LEAF_COLOR 62, 209, 25
     if (block.type == flat::Block::Type::Leaves)
         SDL_SetTextureColorMod(state.atlas, LEAF_COLOR);
@@ -50,9 +55,10 @@ void flat::render(flat::State &state) {
     SDL_SetRenderDrawColor(state.rend, 100, 203, 255, 0);
     SDL_RenderClear(state.rend);
 
-    for (std::size_t idx : state.player.near_chunks)
-        for (auto const &block : state.chunks.at(idx)->blocks)
-            render_block(state, block);
+    for (const auto &[x, y] : state.player.near_chunks) {
+        for (const auto &block : state.chunks.at({x, y})->blocks)
+            render_block(state, block, {x, y});
+    }
 
     render_player(state);
 

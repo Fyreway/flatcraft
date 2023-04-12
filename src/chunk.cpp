@@ -2,18 +2,15 @@
 
 #include "util.hpp"
 
-flat::Chunk::Chunk(int x, int y, const std::vector<Block> &blocks)
-    : x(x),
-      y(y),
-      blocks(blocks) {}
+flat::Chunk::Chunk(const std::vector<Block> &blocks) : blocks(blocks) {}
 
-flat::Chunk flat::Chunk::build_flat(int x, int y) {
+flat::Chunk flat::Chunk::build_flat() {
     std::vector<Block> blocks;
 
     for (range(8)) {
-        blocks.emplace_back(8 * x + i, 0, Block::Type::Stone);
-        blocks.emplace_back(8 * x + i, 1, Block::Type::Leaves);
+        blocks.emplace_back(i, 0, Block::Type::Stone);
+        blocks.emplace_back(i, 1, Block::Type::Leaves);
     }
 
-    return Chunk(x, y, blocks);
+    return Chunk(blocks);
 }
