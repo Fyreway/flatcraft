@@ -17,13 +17,13 @@ flat::State::State() : player(0, 0) {
                            800,
                            600,
                            0);
-    if (win == NULL) util::error_sdl("window creation");
+    if (win == nullptr) util::error_sdl("window creation");
 
     rend = SDL_CreateRenderer(
         win,
         -1,
         SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
-    if (rend == NULL) util::error_sdl("renderer acquisition");
+    if (rend == nullptr) util::error_sdl("renderer acquisition");
 
     // TODO: normalize path
     atlas = IMG_LoadTexture(rend, "../res/terrain.png");
