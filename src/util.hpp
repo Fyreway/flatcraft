@@ -1,6 +1,8 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
 
+#include <string>
+
 #define range_enum(name, start, end, step) \
     unsigned long name = (start);          \
     name < (end);                          \
@@ -12,8 +14,8 @@
 
 #define range(end) range_start(0, end)
 
-#define jrange(end) range_enum(j, 0, end, 1)
-
-void error_sdl(const char *proc);
+namespace util {
+    void error_sdl(const std::string &proc);
+}
 
 #endif
