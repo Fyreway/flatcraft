@@ -20,7 +20,7 @@ SDL_Rect get_block_render_pos(const flat::State &state,
     return {
         static_cast<int>(std::round((block.x - state.player.x) * 16 * SCALE))
             + WIDTH / 2,
-        static_cast<int>(std::round((block.y - state.player.y) * 16 * SCALE))
+        static_cast<int>(std::round((-block.y - state.player.y) * 16 * SCALE))
             + HEIGHT / 2,
         16 * SCALE,
         16 * SCALE};
@@ -29,6 +29,11 @@ SDL_Rect get_block_render_pos(const flat::State &state,
 void render_block(flat::State &state, const flat::Block &block) {
     SDL_Rect src = get_block_texture(block.type);
     SDL_Rect dst = get_block_render_pos(state, block);
+#define LEAF_COLOR 62, 209, 25
+    if (block.type == flat::Block::Type::Leaves)
+        SDL_SetTextureColorMod(state.atlas, LEAF_COLOR);
+    else
+        SDL_SetTextureColorMod(state.atlas, 255, 255, 255);
     SDL_RenderCopy(state.rend, state.atlas, &src, &dst);
 }
 

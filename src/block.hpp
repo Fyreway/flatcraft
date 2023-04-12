@@ -12,7 +12,8 @@ namespace flat {
             Planks,
             Cobblestone = 16,
             Bedrock,
-            Log = 20
+            Log = 20,
+            Leaves = 53,
         } type;
 
         Block(int x, int y, Type type);

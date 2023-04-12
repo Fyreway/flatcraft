@@ -10,7 +10,10 @@ flat::Chunk::Chunk(int x, int y, const std::vector<Block> &blocks)
 flat::Chunk flat::Chunk::build_flat(int x, int y) {
     std::vector<Block> blocks;
 
-    for (range(8)) blocks.emplace_back(8 * x + i, 0, Block::Type::Stone);
+    for (range(8)) {
+        blocks.emplace_back(8 * x + i, 0, Block::Type::Stone);
+        blocks.emplace_back(8 * x + i, 1, Block::Type::Leaves);
+    }
 
     return Chunk(x, y, blocks);
 }
