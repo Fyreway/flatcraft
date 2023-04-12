@@ -9,7 +9,7 @@ add_subdirectory(libs/vec)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-set(FLATCRAFT_SOURCES src/main.c src/util.c src/state.c src/render.c src/event.c)
+set(FLATCRAFT_SOURCES src/main.c src/util.c src/state.c src/render.c src/event.c src/block.c src/chunk.c)
 
 add_executable(flatcraft ${FLATCRAFT_SOURCES})
 

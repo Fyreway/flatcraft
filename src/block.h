@@ -8,4 +8,8 @@ typedef struct {
     BlockType type;
 } Block;
 
+Block *Block_new(long x, long y, BlockType type);
+
+void Block_destroy(Block *block);
+
 #endif

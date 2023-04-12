@@ -15,6 +15,7 @@ typedef struct {
 
 typedef struct {
     Player player;
+    Vec *chunks;
 } GameState;
 
 typedef struct {

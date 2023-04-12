@@ -4,6 +4,8 @@
 #include <SDL_image.h>
 
 #include "block.h"
+#include "chunk.h"
+#include "util.h"
 
 #define SCALE 4
 
@@ -14,9 +16,9 @@ SDL_Rect get_block_texture(BlockType type) {
                       .h = 16};
 }
 
-SDL_Rect get_block_render_pos(Block block) {
-    return (SDL_Rect){.x = block.x * 16 * SCALE,
-                      .y = block.y * 16 * SCALE,
+SDL_Rect get_block_render_pos(const Block *const block) {
+    return (SDL_Rect){.x = block->x * 16 * SCALE,
+                      .y = block->y * 16 * SCALE,
                       .w = 16 * SCALE,
                       .h = 16 * SCALE};
 }
@@ -28,18 +30,25 @@ SDL_Rect get_viewport(GameState game_state) {
                       .h = 600};
 }
 
-void render_block(SdlState *sdl_state, Block block) {
-    SDL_Rect src = get_block_texture(block.type);
+void render_block(SdlState *sdl_state, const Block *const block) {
+    SDL_Rect src = get_block_texture(block->type);
     SDL_Rect dst = get_block_render_pos(block);
-    SDL_RenderCopy(sdl_state->rend, sdl_state->atlas, &src, &dst);
+    if (SDL_RenderCopy(sdl_state->rend, sdl_state->atlas, &src, &dst) < 0)
+        printf("Rendering block %ld, %ld failed\n", block->x, block->y);
 }
 
 void render(State *state) {
     SDL_SetRenderDrawColor(state->sdl_state.rend, 100, 203, 255, 0);
     SDL_RenderClear(state->sdl_state.rend);
 
-    Block block = {.x = 0, .y = 0, .type = BlockType_Stone};
-    render_block(&state->sdl_state, block);
+    for (range(state->game_state.chunks->len)) {
+        Chunk *chunk = (Chunk *)state->game_state.chunks->arr[i];
+        for (jrange(chunk->blocks->len)) {
+            Block *block = (Block *)Vec_get_ptr(chunk->blocks, j);
+            printf("Rendering block at %ld, %ld\n", block->x, block->y);
+            render_block(&state->sdl_state, block);
+        }
+    }
 
     SDL_Rect viewport = get_viewport(state->game_state);
     SDL_RenderSetViewport(state->sdl_state.rend, &viewport);

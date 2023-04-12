@@ -4,7 +4,12 @@
 #include <vec/vec.h>
 
 typedef struct {
-    Vec blocks;
+    int x, y;
+    Vec *blocks;
 } Chunk;
+
+Chunk *build_flat(int x, int y);
+
+void Chunk_destroy(Chunk *chunk);
 
 #endif

@@ -3,7 +3,9 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
+#include "chunk.h"
 #include "util.h"
+#include "vec/vec.h"
 
 State init() {
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) error_sdl("SDL init");
@@ -30,7 +32,10 @@ State init() {
 
     Player player = {.x = 0, .y = 0};
 
-    GameState game_state = {.player = player};
+    Vec *chunks = Vec_new();
+    for (range(5)) Vec_push_ptr(chunks, (void *)build_flat(i, 0));
+
+    GameState game_state = {.player = player, .chunks = chunks};
 
     return (State){.sdl_state = sdl_state, .game_state = game_state};
 }
@@ -42,4 +47,9 @@ void cleanup(State *state) {
 
     SDL_Quit();
     IMG_Quit();
+
+    for (range(state->game_state.chunks->len))
+        Vec_destroy(((Chunk *)state->game_state.chunks->arr[i])->blocks);
+
+    Vec_destroy(state->game_state.chunks);
 }
