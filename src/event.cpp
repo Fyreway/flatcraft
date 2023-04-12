@@ -13,8 +13,9 @@ void flat::handle_events(bool &running, State &state) {
     }
 
     const std::uint8_t *key_states = SDL_GetKeyboardState(NULL);
-    if (key_states[SDL_SCANCODE_W]) state.player.y -= 0.8;
-    if (key_states[SDL_SCANCODE_A]) state.player.x -= 0.8;
-    if (key_states[SDL_SCANCODE_S]) state.player.y += 0.8;
-    if (key_states[SDL_SCANCODE_D]) state.player.x += 0.8;
+    if (key_states[SDL_SCANCODE_A]) state.player.x -= 0.2;
+    if (key_states[SDL_SCANCODE_D]) state.player.x += 0.2;
+    if (key_states[SDL_SCANCODE_SPACE] && state.player.vert_vel == 0) {
+        state.player.vert_vel = -1;
+    }
 }

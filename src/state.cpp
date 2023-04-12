@@ -32,7 +32,7 @@ flat::State::State() {
     for (range(5))
         chunks.push_back(std::make_unique<Chunk>(Chunk::build_flat(i, 0)));
 
-    player = Player(0, 0, chunks);
+    player = Player(0, 2, chunks);
 }
 
 flat::State::~State() {

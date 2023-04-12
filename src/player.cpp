@@ -21,12 +21,15 @@ flat::Player::Player(double x,
                      double y,
                      const std::vector<std::unique_ptr<Chunk>> &chunks)
     : x(x),
-      y(y) {
+      y(-y) {
     update(chunks);
 }
 
 void flat::Player::update(const std::vector<std::unique_ptr<Chunk>> &chunks) {
-    chunk_x = std::floorf((float)x / 8);
-    chunk_y = std::floorf((float)y / 8);
+    vert_vel += gravity;
+    y += vert_vel;
+
+    chunk_x = std::floor(x / 8);
+    chunk_y = std::floor(y / 8);
     near_chunks = get_near_chunks(chunks, *this);
 }

@@ -12,6 +12,8 @@ namespace flat {
         double x, y;
         int chunk_x, chunk_y;
         std::vector<std::size_t> near_chunks;
+        double vert_vel = 0;
+        double gravity = 0.5;
 
         Player() = default;
         Player(double x,
