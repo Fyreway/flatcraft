@@ -1,20 +1,38 @@
 #ifndef __CHUNK_H__
 #define __CHUNK_H__
 
+#include <unordered_map>
 #include <vector>
 
 #include "block.hpp"
+#include "util.hpp"
 
 namespace flat {
+    using Blocks = std::unordered_map<Coords, Block, util::pair_hash>;
+
     class Chunk {
     public:
-        std::vector<Block> blocks;
+        const int pos;
+        Blocks blocks;
 
-        static Chunk build_flat();
+        static Chunk build_flat(int pos);
+
+        Block &get_block(const Coords &pos);
+
+        Coords normalize_block_pos(const Coords &block_pos) const;
+        Coords abnormalize_block_pos(const Coords &block_pos) const;
+        static Coords normalize_block_pos(int chunk_pos,
+                                          const Coords &block_pos);
+
+        static Coords abnormalize_block_pos(int chunk_pos,
+                                            const Coords &block_pos);
 
     private:
-        Chunk(const std::vector<Block> &blocks);
+        Chunk(int pos, const Blocks &blocks);
     };
+
+    using Chunks = std::unordered_map<int, std::unique_ptr<Chunk>>;
+
 }  // namespace flat
 
 #endif

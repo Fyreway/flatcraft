@@ -1,10 +1,14 @@
 #ifndef __BLOCK_H__
 #define __BLOCK_H__
 
+#include <utility>
+
 namespace flat {
+    using Coords = std::pair<int, int>;
+
     class Block {
     public:
-        const int x, y;
+        const Coords pos;
         enum class Type {
             Stone = 1,
             Dirt,
@@ -16,7 +20,7 @@ namespace flat {
             Leaves = 53,
         } type;
 
-        Block(int x, int y, Type type);
+        Block(const Coords &pos, Type type);
     };
 }  // namespace flat
 

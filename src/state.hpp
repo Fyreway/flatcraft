@@ -2,7 +2,6 @@
 #define __STATE_H__
 
 #include <SDL.h>
-#include <SDL_render.h>
 #include <unordered_map>
 
 #include "player.hpp"
@@ -15,10 +14,7 @@ namespace flat {
     class State {
     public:
         Player player;
-        std::unordered_map<std::pair<int, int>,
-                           std::unique_ptr<Chunk>,
-                           util::pair_hash>
-            chunks;
+        Chunks chunks;
 
         SDL_Window *win;
         SDL_Renderer *rend;

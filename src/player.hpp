@@ -11,21 +11,18 @@ namespace flat {
     class Player {
     public:
         double x, y;
-        int chunk_x, chunk_y;
-        std::vector<std::pair<int, int>> near_chunks;
-        double vert_vel = 0;
-        double gravity = 0.5;
+        int chunk_x;
+        std::vector<int> near_chunks;
+        // double vert_vel = 0;
+        bool stopped = false;
+        double gravity = -0.5;
 
         Player() = default;
-        Player(double x,
-               double y,
-               const std::unordered_map<std::pair<int, int>,
-                                        std::unique_ptr<Chunk>,
-                                        util::pair_hash> &chunks);
+        Player(double x, double y, const Chunks &chunks);
 
-        void update(const std::unordered_map<std::pair<int, int>,
-                                             std::unique_ptr<Chunk>,
-                                             util::pair_hash> &chunks);
+        void update(const Chunks &chunks);
+
+        void move(const Chunks &chunks, double amount);
     };
 }  // namespace flat
 

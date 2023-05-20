@@ -30,10 +30,9 @@ flat::State::State() {
     steve = IMG_LoadTexture(rend, "../res/steve.png");
 
     for (range(5))
-        chunks.insert(
-            {std::pair{i, 0}, std::make_unique<Chunk>(Chunk::build_flat())});
+        chunks.insert({i, std::make_unique<Chunk>(Chunk::build_flat(i))});
 
-    player = Player(0, 2, chunks);
+    player = Player(0.5, 60, chunks);
 }
 
 flat::State::~State() {
