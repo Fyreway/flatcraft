@@ -17,6 +17,9 @@ void flat::State::handle_events(bool &running) {
                 if (player.targeted.has_value())
                     change_block(player.targeted.value(), player.focused_type);
                 break;
+            case SDL_SCANCODE_Y:
+                if (player.targeted.has_value())
+                    change_block(player.targeted.value(), std::nullopt);
             case SDL_SCANCODE_1:
                 player.focused_type = Block::Type::Stone;
                 break;

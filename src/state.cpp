@@ -58,13 +58,22 @@ void flat::State::change_block(const Coords &pos,
 
     int chunk_pos = util::f_floor(x / 8.0);
 
-    if (chunks.find(chunk_pos) == chunks.end())
-        chunks.insert({chunk_pos,
-                       std::make_unique<Chunk>(Chunk::build_empty(chunk_pos))});
+    if (type.has_value()) {
+        if (chunks.find(chunk_pos) == chunks.end())
+            chunks.insert(
+                {chunk_pos,
+                 std::make_unique<Chunk>(Chunk::build_empty(chunk_pos))});
 
-    auto &chunk = chunks.at(chunk_pos);
+        auto &chunk = chunks.at(chunk_pos);
 
-    chunk->blocks.insert_or_assign(
-        chunk->abnormalize_block_pos({x, y}),
-        Block(chunk->abnormalize_block_pos({x, y}), type.value()));
+        chunk->blocks.insert_or_assign(
+            chunk->abnormalize_block_pos({x, y}),
+            Block(chunk->abnormalize_block_pos({x, y}), type.value()));
+    } else {
+        if (chunks.find(chunk_pos) != chunks.end()) {
+            auto &chunk = chunks.at(chunk_pos);
+            chunk->blocks.erase(chunk->abnormalize_block_pos({x, y}));
+            if (chunk->blocks.empty()) chunks.erase(chunk_pos);
+        }
+    }
 }
