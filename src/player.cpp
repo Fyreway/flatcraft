@@ -66,7 +66,7 @@ void flat::Player::update_pos(const Chunks &chunks) {
 void flat::Player::update_target(int mx, int my) {
     targeted = {std::ceil((mx - 400 - 32) / 64.0) + util::f_floor(x),
                 std::ceil(-(my - 300) / 64.0) + util::f_ceil(y)};
-    if (util::distance(targeted.value(), std::pair{x, y + 1}) > 4)
+    if (util::distance(targeted.value(), std::pair{x - 0.5, y + 1}) > 4)
         targeted.reset();
     // std::cout << "Targeted: " << targeted->first << ' ' << targeted->second
     //           << std::endl;
