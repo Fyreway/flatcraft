@@ -19,17 +19,14 @@ flat::State::State() {
                            0);
     if (win == nullptr) util::error_sdl("window creation");
 
-    rend = SDL_CreateRenderer(
-        win,
-        -1,
-        SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    rend = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
     if (rend == nullptr) util::error_sdl("renderer acquisition");
 
     // TODO: normalize path
     atlas = IMG_LoadTexture(rend, "../res/terrain.png");
     steve = IMG_LoadTexture(rend, "../res/steve.png");
 
-    for (range(5))
+    for (range_start(-1, 5))
         chunks.insert({i, std::make_unique<Chunk>(Chunk::build_flat(i))});
 
     player = Player(0.5, 60, chunks);
@@ -44,4 +41,8 @@ flat::State::~State() {
     IMG_Quit();
 }
 
-void flat::update(State &state) { state.player.update(state.chunks); }
+void flat::update(State &state) {
+    int mx, my;
+    SDL_GetMouseState(&mx, &my);
+    state.player.update(state.chunks, mx, my);
+}

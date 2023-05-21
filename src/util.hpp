@@ -24,6 +24,19 @@ namespace util {
             return std::hash<T1>()(pair.first) ^ std::hash<T2>()(pair.second);
         }
     };
+
+    static inline int32_t f_floor(double v) {
+        int32_t i = static_cast<int32_t>(v);
+        return v < i ? i - 1 : i;
+    }
+
+    static inline int32_t f_trunc(double v) { return static_cast<int32_t>(v); }
+
+    static inline int32_t f_ceil(double v) {
+        int32_t i = static_cast<int32_t>(v);
+        return i < v ? i + 1 : i;
+    }
+
 }  // namespace util
 
 #endif

@@ -29,6 +29,16 @@ SDL_Rect get_block_render_pos(const flat::Player &player,
             PIXEL_SCALE};
 }
 
+SDL_Rect get_render_pos(const flat::Player &player, const flat::Coords &pos) {
+    const auto &[block_x, block_y] = pos;
+    return {static_cast<int>(std::round((block_x - player.x) * PIXEL_SCALE))
+                + WIDTH / 2,
+            static_cast<int>(std::round(-(block_y - player.y) * PIXEL_SCALE))
+                + HEIGHT / 2,
+            PIXEL_SCALE,
+            PIXEL_SCALE};
+}
+
 void render_block(flat::State &state, const flat::Block &block, int chunk_pos) {
     SDL_Rect src = get_block_texture(block.type);
     SDL_Rect dst = get_block_render_pos(
@@ -50,6 +60,16 @@ void render_player(flat::State &state) {
                        PIXEL_SCALE,
                        2 * PIXEL_SCALE};
     SDL_RenderCopy(state.rend, state.steve, &steve_src, &steve_dst);
+
+    if (state.player.targeted.has_value()) {
+        const auto &[mx, my] = state.player.targeted.value();
+        SDL_SetRenderDrawColor(state.rend, 255, 255, 255, 100);
+        SDL_SetRenderDrawBlendMode(state.rend, SDL_BLENDMODE_BLEND);
+
+        SDL_Rect target = get_render_pos(state.player, {mx, my});
+
+        SDL_RenderFillRect(state.rend, &target);
+    }
 }
 
 void flat::render(flat::State &state) {

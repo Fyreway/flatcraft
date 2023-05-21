@@ -11,6 +11,7 @@ flat::Chunk flat::Chunk::build_flat(int pos) {
     blocks.erase({5, 0});
     blocks.insert({{5, -1}, {{5, -1}, Block::Type::Stone}});
 
+    // blocks.insert({{2, 2}, {{2, 2}, Block::Type::Bedrock}});
     blocks.insert({{2, 1}, {{2, 1}, Block::Type::Stone}});
 
     return Chunk(pos, blocks);
