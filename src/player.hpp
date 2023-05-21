@@ -20,6 +20,8 @@ namespace flat {
 
         std::optional<Coords> targeted;
 
+        Block::Type focused_type = Block::Type::Stone;
+
         Player() = default;
         Player(double x, double y, const Chunks &chunks);
 

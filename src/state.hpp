@@ -32,6 +32,7 @@ namespace flat {
     private:
         void render_player();
         void render_block(const Block &block, int chunk_pos);
+        void render_block_select();
 
         void change_block(const Coords &pos,
                           const std::optional<Block::Type> &type);

@@ -14,6 +14,7 @@ namespace flat {
             Dirt,
             Grass,
             Planks,
+            Bricks = 7,
             Cobblestone = 16,
             Bedrock,
             Log = 20,

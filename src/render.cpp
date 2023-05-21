@@ -40,18 +40,27 @@ SDL_Rect get_render_pos(const flat::Player &player, const flat::Coords &pos) {
             PIXEL_SCALE};
 }
 
+void draw_block(SDL_Renderer *rend,
+                SDL_Texture *atlas,
+                SDL_Rect *src,
+                SDL_Rect *dst,
+                flat::Block::Type type) {
+#define LEAF_COLOR 62, 209, 25
+    if (type == flat::Block::Type::Leaves)
+        SDL_SetTextureColorMod(atlas, LEAF_COLOR);
+    else
+        SDL_SetTextureColorMod(atlas, 255, 255, 255);
+#undef LEAF_COLOR
+    SDL_RenderCopy(rend, atlas, src, dst);
+}
+
 void flat::State::render_block(const flat::Block &block, int chunk_pos) {
     SDL_Rect src = get_block_texture(block.type);
     SDL_Rect dst = get_block_render_pos(
         player,
         flat::Chunk::normalize_block_pos(chunk_pos, block.pos));
-#define LEAF_COLOR 62, 209, 25
-    if (block.type == flat::Block::Type::Leaves)
-        SDL_SetTextureColorMod(atlas, LEAF_COLOR);
-    else
-        SDL_SetTextureColorMod(atlas, 255, 255, 255);
-#undef LEAF_COLOR
-    SDL_RenderCopy(rend, atlas, &src, &dst);
+
+    draw_block(rend, atlas, &src, &dst, block.type);
 }
 
 void flat::State::render_player() {
@@ -73,6 +82,13 @@ void flat::State::render_player() {
     }
 }
 
+void flat::State::render_block_select() {
+    SDL_Rect src = get_block_texture(player.focused_type);
+    SDL_Rect dst = {15, 15, PIXEL_SCALE / 2, PIXEL_SCALE / 2};
+
+    draw_block(rend, atlas, &src, &dst, player.focused_type);
+}
+
 void flat::State::render() {
     SDL_SetRenderDrawColor(rend, 100, 203, 255, 0);
     SDL_RenderClear(rend);
@@ -82,6 +98,8 @@ void flat::State::render() {
             render_block(block, pos);
 
     render_player();
+
+    render_block_select();
 
     SDL_RenderPresent(rend);
 }
