@@ -53,7 +53,8 @@ void flat::State::change_block(const Coords &pos,
                                const std::optional<Block::Type> &type) {
     const auto &[x, y] = pos;
 
-    if (pos == std::pair{util::f_floor(player.x), util::f_ceil(player.y + 1)})
+    if (x == util::f_floor(player.x)
+        && (y == util::f_ceil(player.y) + 1 || y == util::f_ceil(player.y) + 2))
         return;
 
     int chunk_pos = util::f_floor(x / 8.0);
@@ -66,7 +67,7 @@ void flat::State::change_block(const Coords &pos,
 
         auto &chunk = chunks.at(chunk_pos);
 
-        chunk->blocks.insert_or_assign(
+        chunk->blocks.emplace(
             chunk->abnormalize_block_pos({x, y}),
             Block(chunk->abnormalize_block_pos({x, y}), type.value()));
     } else {

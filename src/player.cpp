@@ -29,9 +29,6 @@ void flat::Player::update_pos(const Chunks &chunks) {
 
     chunk_x = util::f_floor(x / 8);
 
-    y += vert_vel;
-    vert_vel *= 0.8;
-
     if (chunks.find(chunk_x) == chunks.end()) {
         stopped = false;
         y += gravity;
@@ -40,6 +37,14 @@ void flat::Player::update_pos(const Chunks &chunks) {
 
     const auto &chunk = chunks.at(chunk_x);
 
+    if (chunk->blocks.find(chunk->abnormalize_block_pos(
+            {util::f_floor(x), util::f_ceil(y + 2)}))
+        != chunk->blocks.end()) {
+        vert_vel = 0;
+    } else {
+        y += vert_vel;
+        vert_vel *= 0.8;
+    }
     if (chunk->blocks.find(
             chunk->abnormalize_block_pos({util::f_floor(x), util::f_ceil(y)}))
         != chunk->blocks.end()) {
@@ -61,7 +66,8 @@ void flat::Player::update_pos(const Chunks &chunks) {
 void flat::Player::update_target(int mx, int my) {
     targeted = {std::ceil((mx - 400 - 32) / 64.0) + util::f_floor(x),
                 std::ceil(-(my - 300) / 64.0) + util::f_ceil(y)};
-    if (util::distance(targeted.value(), std::pair{x, y}) > 4) targeted.reset();
+    if (util::distance(targeted.value(), std::pair{x, y + 1}) > 4)
+        targeted.reset();
     // std::cout << "Targeted: " << targeted->first << ' ' << targeted->second
     //           << std::endl;
 }
@@ -80,7 +86,10 @@ void flat::Player::move(const Chunks &chunks, double amount) {
 
     if (chunk->blocks.find(chunk->abnormalize_block_pos(
             {util::f_floor(pot_x), util::f_ceil(y + 1)}))
-        == chunk->blocks.end())
+            == chunk->blocks.end()
+        && chunk->blocks.find(chunk->abnormalize_block_pos(
+               {util::f_floor(pot_x), util::f_ceil(y + 2)}))
+               == chunk->blocks.end())
         x = pot_x;
     chunk_x = util::f_floor(x / 8);
     near_chunks = get_near_chunks(chunks, *this);
