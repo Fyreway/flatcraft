@@ -22,9 +22,20 @@ namespace flat {
 
         State();
         ~State();
-    };
 
-    void update(State &state);
+        void handle_events(bool &running);
+
+        void update();
+
+        void render();
+
+    private:
+        void render_player();
+        void render_block(const Block &block, int chunk_pos);
+
+        void change_block(const Coords &pos,
+                          const std::optional<Block::Type> &type);
+    };
 }  // namespace flat
 
 #endif

@@ -2,7 +2,9 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <memory>
 
+#include "block.hpp"
 #include "player.hpp"
 #include "util.hpp"
 
@@ -41,8 +43,28 @@ flat::State::~State() {
     IMG_Quit();
 }
 
-void flat::update(State &state) {
+void flat::State::update() {
     int mx, my;
     SDL_GetMouseState(&mx, &my);
-    state.player.update(state.chunks, mx, my);
+    player.update(chunks, mx, my);
+}
+
+void flat::State::change_block(const Coords &pos,
+                               const std::optional<Block::Type> &type) {
+    const auto &[x, y] = pos;
+
+    if (pos == std::pair{util::f_floor(player.x), util::f_ceil(player.y + 1)})
+        return;
+
+    int chunk_pos = util::f_floor(x / 8.0);
+
+    if (chunks.find(chunk_pos) == chunks.end())
+        chunks.insert({chunk_pos,
+                       std::make_unique<Chunk>(Chunk::build_empty(chunk_pos))});
+
+    auto &chunk = chunks.at(chunk_pos);
+
+    chunk->blocks.insert_or_assign(
+        chunk->abnormalize_block_pos({x, y}),
+        Block(chunk->abnormalize_block_pos({x, y}), type.value()));
 }

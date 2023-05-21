@@ -16,6 +16,7 @@ namespace flat {
         Blocks blocks;
 
         static Chunk build_flat(int pos);
+        static Chunk build_empty(int pos);
 
         Block &get_block(const Coords &pos);
 

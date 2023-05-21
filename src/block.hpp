@@ -8,7 +8,7 @@ namespace flat {
 
     class Block {
     public:
-        const Coords pos;
+        Coords pos;
         enum class Type {
             Stone = 1,
             Dirt,

@@ -25,7 +25,7 @@ void flat::Player::update(const Chunks &chunks, int mx, int my) {
 }
 
 void flat::Player::update_pos(const Chunks &chunks) {
-    std::cout << "Player pos: " << x << ' ' << y << std::endl;
+    // std::cout << "Player pos: " << x << ' ' << y << std::endl;
 
     chunk_x = util::f_floor(x / 8);
 
@@ -60,9 +60,10 @@ void flat::Player::update_pos(const Chunks &chunks) {
 
 void flat::Player::update_target(int mx, int my) {
     targeted = {std::ceil((mx - 400 - 32) / 64.0) + util::f_floor(x),
-                std::ceil(-(my - 300) / 64.0) + util::f_trunc(y)};
-    std::cout << "Targeted: " << targeted->first << ' ' << targeted->second
-              << std::endl;
+                std::ceil(-(my - 300) / 64.0) + util::f_ceil(y)};
+    if (util::distance(targeted.value(), std::pair{x, y}) > 4) targeted.reset();
+    // std::cout << "Targeted: " << targeted->first << ' ' << targeted->second
+    //           << std::endl;
 }
 
 void flat::Player::move(const Chunks &chunks, double amount) {

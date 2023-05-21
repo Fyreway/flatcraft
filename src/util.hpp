@@ -1,6 +1,7 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
 
+#include <cmath>
 #include <string>
 #include <utility>
 
@@ -37,6 +38,14 @@ namespace util {
         return i < v ? i + 1 : i;
     }
 
+    template<typename T1, typename T2>
+    static inline double distance(const std::pair<T1, T1> &pos1,
+                                  const std::pair<T2, T2> &pos2) {
+        const auto &[x1, y1] = pos1;
+        const auto &[x2, y2] = pos2;
+
+        return std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
+    }
 }  // namespace util
 
 #endif

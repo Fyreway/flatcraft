@@ -1,6 +1,7 @@
-#include "render.hpp"
+#include <SDL.h>
 
 #include "block.hpp"
+#include "state.hpp"
 
 #define SCALE       4
 #define BLOCK_SIZE  16
@@ -39,48 +40,48 @@ SDL_Rect get_render_pos(const flat::Player &player, const flat::Coords &pos) {
             PIXEL_SCALE};
 }
 
-void render_block(flat::State &state, const flat::Block &block, int chunk_pos) {
+void flat::State::render_block(const flat::Block &block, int chunk_pos) {
     SDL_Rect src = get_block_texture(block.type);
     SDL_Rect dst = get_block_render_pos(
-        state.player,
+        player,
         flat::Chunk::normalize_block_pos(chunk_pos, block.pos));
 #define LEAF_COLOR 62, 209, 25
     if (block.type == flat::Block::Type::Leaves)
-        SDL_SetTextureColorMod(state.atlas, LEAF_COLOR);
+        SDL_SetTextureColorMod(atlas, LEAF_COLOR);
     else
-        SDL_SetTextureColorMod(state.atlas, 255, 255, 255);
+        SDL_SetTextureColorMod(atlas, 255, 255, 255);
 #undef LEAF_COLOR
-    SDL_RenderCopy(state.rend, state.atlas, &src, &dst);
+    SDL_RenderCopy(rend, atlas, &src, &dst);
 }
 
-void render_player(flat::State &state) {
+void flat::State::render_player() {
     SDL_Rect steve_src{168, 0, 16 * 8, 32 * 8};
     SDL_Rect steve_dst{(WIDTH - PIXEL_SCALE) / 2,
                        (HEIGHT - 4 * PIXEL_SCALE) / 2,
                        PIXEL_SCALE,
                        2 * PIXEL_SCALE};
-    SDL_RenderCopy(state.rend, state.steve, &steve_src, &steve_dst);
+    SDL_RenderCopy(rend, steve, &steve_src, &steve_dst);
 
-    if (state.player.targeted.has_value()) {
-        const auto &[mx, my] = state.player.targeted.value();
-        SDL_SetRenderDrawColor(state.rend, 255, 255, 255, 100);
-        SDL_SetRenderDrawBlendMode(state.rend, SDL_BLENDMODE_BLEND);
+    if (player.targeted.has_value()) {
+        const auto &[mx, my] = player.targeted.value();
+        SDL_SetRenderDrawColor(rend, 255, 255, 255, 100);
+        SDL_SetRenderDrawBlendMode(rend, SDL_BLENDMODE_BLEND);
 
-        SDL_Rect target = get_render_pos(state.player, {mx, my});
+        SDL_Rect target = get_render_pos(player, {mx, my});
 
-        SDL_RenderFillRect(state.rend, &target);
+        SDL_RenderFillRect(rend, &target);
     }
 }
 
-void flat::render(flat::State &state) {
-    SDL_SetRenderDrawColor(state.rend, 100, 203, 255, 0);
-    SDL_RenderClear(state.rend);
+void flat::State::render() {
+    SDL_SetRenderDrawColor(rend, 100, 203, 255, 0);
+    SDL_RenderClear(rend);
 
-    for (const auto &pos : state.player.near_chunks)
-        for (const auto &[_, block] : state.chunks.at(pos)->blocks)
-            render_block(state, block, pos);
+    for (const auto &pos : player.near_chunks)
+        for (const auto &[_, block] : chunks.at(pos)->blocks)
+            render_block(block, pos);
 
-    render_player(state);
+    render_player();
 
-    SDL_RenderPresent(state.rend);
+    SDL_RenderPresent(rend);
 }

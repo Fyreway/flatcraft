@@ -17,6 +17,8 @@ flat::Chunk flat::Chunk::build_flat(int pos) {
     return Chunk(pos, blocks);
 }
 
+flat::Chunk flat::Chunk::build_empty(int pos) { return Chunk(pos, {}); }
+
 flat::Block &flat::Chunk::get_block(const Coords &pos) {
     return blocks.at(pos);
 }
