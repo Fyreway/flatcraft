@@ -1,7 +1,5 @@
 #include "state.hpp"
 
-#include <SDL.h>
-
 void flat::State::handle_events(bool &running) {
     SDL_Event event;
 

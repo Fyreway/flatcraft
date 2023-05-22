@@ -1,6 +1,3 @@
-#include <SDL.h>
-
-#include "block.hpp"
 #include "state.hpp"
 
 #define SCALE       4

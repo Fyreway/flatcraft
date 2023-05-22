@@ -2,10 +2,8 @@
 #define __STATE_H__
 
 #include <SDL.h>
-#include <unordered_map>
 
 #include "player.hpp"
-#include "util.hpp"
 
 #define WIDTH  800
 #define HEIGHT 600

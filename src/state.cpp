@@ -1,12 +1,7 @@
 #include "state.hpp"
 
-#include <SDL.h>
 #include <SDL_image.h>
-#include <memory>
-
 #include "block.hpp"
-#include "player.hpp"
-#include "util.hpp"
 
 flat::State::State() {
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) util::error_sdl("SDL init");
@@ -28,7 +23,7 @@ flat::State::State() {
     atlas = IMG_LoadTexture(rend, "../res/terrain.png");
     steve = IMG_LoadTexture(rend, "../res/steve.png");
 
-    for (range_start(-1, 5))
+    for (int i = -1; i < 5; i++)
         chunks.insert({i, std::make_unique<Chunk>(Chunk::build_flat(i))});
 
     player = Player(0.5, 60, chunks);
@@ -53,11 +48,11 @@ void flat::State::change_block(const Coords &pos,
                                const std::optional<Block::Type> &type) {
     const auto &[x, y] = pos;
 
-    if (x == util::f_floor(player.x)
-        && (y == util::f_ceil(player.y) + 1 || y == util::f_ceil(player.y) + 2))
+    if (x == floor(player.x)
+        && (y == ceil(player.y) + 1 || y == ceil(player.y) + 2))
         return;
 
-    int chunk_pos = util::f_floor(x / 8.0);
+    int chunk_pos = floor(x / 8.0);
 
     if (type.has_value()) {
         if (chunks.find(chunk_pos) == chunks.end())
@@ -73,7 +68,11 @@ void flat::State::change_block(const Coords &pos,
     } else {
         if (chunks.find(chunk_pos) != chunks.end()) {
             auto &chunk = chunks.at(chunk_pos);
-            chunk->blocks.erase(chunk->abnormalize_block_pos({x, y}));
+            const auto ab_pos = chunk->abnormalize_block_pos({x, y});
+            const auto &it = chunk->blocks.find(ab_pos);
+            if (it != chunk->blocks.end()
+                && it->second.type != Block::Type::Bedrock)
+                chunk->blocks.erase(ab_pos);
             if (chunk->blocks.empty()) chunks.erase(chunk_pos);
         }
     }

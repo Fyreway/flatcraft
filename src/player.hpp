@@ -3,10 +3,8 @@
 
 #include <memory>
 #include <optional>
-#include <vector>
 
 #include "chunk.hpp"
-#include "util.hpp"
 
 namespace flat {
     class Player {
