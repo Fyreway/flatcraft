@@ -4,6 +4,7 @@
 #include <numeric>
 #include <random>
 #include "block.hpp"
+#include "player.hpp"
 
 flat::State::State() {
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) util::error_sdl("SDL init");
@@ -32,7 +33,7 @@ flat::State::State() {
 
     for (int i = -4; i < 4; i++)
         chunks.insert(
-            {i, std::make_unique<Chunk>(Chunk::build_simplex(i, perm))});
+            {i, std::make_unique<Chunk>(Chunk::build_terrain(i, perm))});
 
     player = Player(0.5, 60, chunks);
 }
@@ -50,6 +51,16 @@ void flat::State::update() {
     int mx, my;
     SDL_GetMouseState(&mx, &my);
     player.update(chunks, mx, my);
+
+    // Generate chunks at edge of world
+    if (chunks.find(player.chunk_x - 3) == chunks.end()) {
+        chunks.insert({player.chunk_x - 3,
+                       std::make_unique<Chunk>(
+                           Chunk::build_terrain(player.chunk_x - 3, perm))});
+    } else if (chunks.find(player.chunk_x + 3) == chunks.end())
+        chunks.insert({player.chunk_x + 3,
+                       std::make_unique<Chunk>(
+                           Chunk::build_terrain(player.chunk_x + 3, perm))});
 }
 
 void flat::State::change_block(const Coords &pos,
@@ -73,14 +84,46 @@ void flat::State::change_block(const Coords &pos,
         chunk->blocks.emplace(
             chunk->abnormalize_block_pos({x, y}),
             Block(chunk->abnormalize_block_pos({x, y}), type.value()));
+
+        auto it = std::find_if(player.unlocked_types.begin(),
+                               player.unlocked_types.end(),
+                               [type](const std::pair<Block::Type, int> &e) {
+                                   return e.first == type.value();
+                               });
+
+        if (--it->second == 0) player.unlocked_types.erase(it);
     } else {
         if (chunks.find(chunk_pos) != chunks.end()) {
             auto &chunk = chunks.at(chunk_pos);
             const auto ab_pos = chunk->abnormalize_block_pos({x, y});
             const auto &it = chunk->blocks.find(ab_pos);
             if (it != chunk->blocks.end()
-                && it->second.type != Block::Type::Bedrock)
+                && it->second.type != Block::Type::Bedrock) {
+                if (!std::any_of(player.unlocked_types.begin(),
+                                 player.unlocked_types.end(),
+                                 [it](const std::pair<Block::Type, int> &e) {
+                                     return e.first == it->second.type;
+                                 }))
+                    player.unlocked_types.push_back({it->second.type, 1});
+                else {
+                    auto jt = std::find_if(
+                        player.unlocked_types.begin(),
+                        player.unlocked_types.end(),
+                        [it](const std::pair<Block::Type, int> &e) {
+                            return e.first == it->second.type;
+                        });
+                    player.unlocked_types.at(jt - player.unlocked_types.begin())
+                        .second++;
+                }
+                player.focused_type =
+                    std::find_if(player.unlocked_types.begin(),
+                                 player.unlocked_types.end(),
+                                 [it](const std::pair<Block::Type, int> &e) {
+                                     return e.first == it->second.type;
+                                 })
+                    - player.unlocked_types.begin();
                 chunk->blocks.erase(ab_pos);
+            }
             if (chunk->blocks.empty()) chunks.erase(chunk_pos);
         }
     }

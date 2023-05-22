@@ -18,7 +18,9 @@ namespace flat {
 
         std::optional<Coords> targeted;
 
-        Block::Type focused_type = Block::Type::Stone;
+        std::vector<std::pair<Block::Type, int>> unlocked_types;
+
+        std::optional<int> focused_type;
 
         Player() = default;
         Player(double x, double y, const Chunks &chunks);

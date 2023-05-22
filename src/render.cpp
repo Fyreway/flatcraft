@@ -80,10 +80,15 @@ void flat::State::render_player() {
 }
 
 void flat::State::render_block_select() {
-    SDL_Rect src = get_block_texture(player.focused_type);
+    SDL_Rect src = get_block_texture(
+        player.unlocked_types.at(player.focused_type.value()).first);
     SDL_Rect dst = {15, 15, PIXEL_SCALE / 2, PIXEL_SCALE / 2};
 
-    draw_block(rend, atlas, &src, &dst, player.focused_type);
+    draw_block(rend,
+               atlas,
+               &src,
+               &dst,
+               player.unlocked_types.at(player.focused_type.value()).first);
 }
 
 void flat::State::render() {
@@ -96,7 +101,7 @@ void flat::State::render() {
 
     render_player();
 
-    render_block_select();
+    if (player.focused_type.has_value()) render_block_select();
 
     SDL_RenderPresent(rend);
 }

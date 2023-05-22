@@ -47,7 +47,7 @@ flat::Coords flat::Chunk::abnormalize_block_pos(int chunk_pos,
     return {block_x - chunk_pos * 8, block_y};
 }
 
-flat::Chunk flat::Chunk::build_simplex(int pos,
+flat::Chunk flat::Chunk::build_terrain(int pos,
                                        const std::array<uint8_t, 256> &perm) {
     Blocks blocks;
 

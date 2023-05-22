@@ -1,4 +1,5 @@
 #include "player.hpp"
+#include <optional>
 
 std::vector<int> get_near_chunks(const flat::Chunks &chunks,
                                  const flat::Player &player) {
@@ -16,6 +17,10 @@ flat::Player::Player(double x, double y, const Chunks &chunks) : x(x), y(y) {
 void flat::Player::update(const Chunks &chunks, int mx, int my) {
     update_pos(chunks);
     update_target(mx, my);
+
+    if (focused_type.has_value()
+        && focused_type.value() >= unlocked_types.size())
+        focused_type = std::nullopt;
 }
 
 void flat::Player::update_pos(const Chunks &chunks) {
