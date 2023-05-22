@@ -1,6 +1,8 @@
 #include "state.hpp"
 
 #include <SDL_image.h>
+#include <numeric>
+#include <random>
 #include "block.hpp"
 
 flat::State::State() {
@@ -23,8 +25,14 @@ flat::State::State() {
     atlas = IMG_LoadTexture(rend, "../res/terrain.png");
     steve = IMG_LoadTexture(rend, "../res/steve.png");
 
+    std::iota(perm.begin(), perm.end(), 0);
+    std::shuffle(perm.begin(),
+                 perm.end(),
+                 std::default_random_engine(time(nullptr)));
+
     for (int i = -1; i < 5; i++)
-        chunks.insert({i, std::make_unique<Chunk>(Chunk::build_flat(i))});
+        chunks.insert(
+            {i, std::make_unique<Chunk>(Chunk::build_simplex(i, perm))});
 
     player = Player(0.5, 60, chunks);
 }

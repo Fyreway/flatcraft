@@ -17,6 +17,8 @@ namespace flat {
 
         static Chunk build_flat(int pos);
         static Chunk build_empty(int pos);
+        static Chunk build_simplex(int pos,
+                                   const std::array<uint8_t, 256> &perm);
 
         Block &get_block(const Coords &pos);
 

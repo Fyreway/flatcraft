@@ -1,5 +1,9 @@
 #include "chunk.hpp"
 
+#include <iostream>
+
+#include <SimplexNoise.h>
+
 flat::Chunk::Chunk(int pos, const Blocks &blocks) : pos(pos), blocks(blocks) {}
 
 flat::Chunk flat::Chunk::build_flat(int pos) {
@@ -41,4 +45,29 @@ flat::Coords flat::Chunk::abnormalize_block_pos(int chunk_pos,
                                                 const Coords &block_pos) {
     const auto &[block_x, block_y] = block_pos;
     return {block_x - chunk_pos * 8, block_y};
+}
+
+flat::Chunk flat::Chunk::build_simplex(int pos,
+                                       const std::array<uint8_t, 256> &perm) {
+    Blocks blocks;
+
+    for (int i = 0; i < 8; i++) {
+        float val =
+            SimplexNoise::noise(static_cast<float>(pos * 8 + i) / 100, perm);
+        val +=
+            SimplexNoise::noise(static_cast<float>(pos * 8 + i) / 10.5, perm);
+        int y = ceil(val * 10);
+        blocks.insert({{i, y}, {{i, y}, Block::Type::Grass}});
+
+        int j = y;
+        for (; j >= y - rand() % 4 - 1; j--)
+            blocks.insert({{i, j}, {{i, j}, Block::Type::Dirt}});
+
+        for (; j >= -63; j--)
+            blocks.insert({{i, j}, {{i, j}, Block::Type::Stone}});
+
+        blocks.insert({{i, -64}, {{i, -64}, Block::Type::Bedrock}});
+    }
+
+    return Chunk(pos, blocks);
 }

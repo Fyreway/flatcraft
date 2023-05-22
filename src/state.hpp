@@ -14,6 +14,8 @@ namespace flat {
         Player player;
         Chunks chunks;
 
+        std::array<uint8_t, 256> perm;
+
         SDL_Window *win;
         SDL_Renderer *rend;
         SDL_Texture *atlas, *steve;
