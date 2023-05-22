@@ -82,7 +82,12 @@ void flat::State::render_player() {
 void flat::State::render_block_select() {
     SDL_Rect src = get_block_texture(
         player.unlocked_types.at(player.focused_type.value()).first);
-    SDL_Rect dst = {15, 15, PIXEL_SCALE / 2, PIXEL_SCALE / 2};
+    SDL_Rect dst{15, 15, PIXEL_SCALE / 2, PIXEL_SCALE / 2};
+    SDL_Rect border{0, 0, PIXEL_SCALE / 2 + 30, PIXEL_SCALE / 2 + 30};
+
+    SDL_SetRenderDrawColor(rend, 0, 0, 0, 100);
+    SDL_SetRenderDrawBlendMode(rend, SDL_BLENDMODE_BLEND);
+    SDL_RenderFillRect(rend, &border);
 
     draw_block(rend,
                atlas,
