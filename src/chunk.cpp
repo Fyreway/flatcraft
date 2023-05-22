@@ -55,7 +55,7 @@ flat::Chunk flat::Chunk::build_simplex(int pos,
         float val =
             SimplexNoise::noise(static_cast<float>(pos * 8 + i) / 100, perm);
         val +=
-            SimplexNoise::noise(static_cast<float>(pos * 8 + i) / 10.5, perm);
+            SimplexNoise::noise(static_cast<float>(pos * 8 + i) / 60.5, perm);
         int y = ceil(val * 10);
         blocks.insert({{i, y}, {{i, y}, Block::Type::Grass}});
 

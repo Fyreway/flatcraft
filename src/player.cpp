@@ -49,7 +49,7 @@ void flat::Player::update_pos(const Chunks &chunks) {
         stopped = false;
     }
 
-    if (y < -64) {
+    if (ceil(y) < -64) {
         y = 64;
         stopped = true;
         vert_vel = 0;

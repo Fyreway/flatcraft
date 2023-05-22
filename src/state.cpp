@@ -30,7 +30,7 @@ flat::State::State() {
                  perm.end(),
                  std::default_random_engine(time(nullptr)));
 
-    for (int i = -1; i < 5; i++)
+    for (int i = -4; i < 4; i++)
         chunks.insert(
             {i, std::make_unique<Chunk>(Chunk::build_simplex(i, perm))});
 
