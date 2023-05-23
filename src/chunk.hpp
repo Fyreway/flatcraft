@@ -1,6 +1,7 @@
 #ifndef __CHUNK_H__
 #define __CHUNK_H__
 
+#include <random>
 #include <unordered_map>
 #include <vector>
 
@@ -18,7 +19,9 @@ namespace flat {
         static Chunk build_flat(int pos);
         static Chunk build_empty(int pos);
         static Chunk build_terrain(int pos,
-                                   const std::array<uint8_t, 256> &perm);
+                                   const std::array<uint8_t, 256> &perm,
+                                   std::mt19937 &gen,
+                                   std::uniform_int_distribution<int> &dist);
 
         Block &get_block(const Coords &pos);
 

@@ -6,7 +6,7 @@
 #include "block.hpp"
 #include "player.hpp"
 
-flat::State::State() {
+flat::State::State() : seed(time(nullptr)), gen(seed), dist(3, 5) {
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) util::error_sdl("SDL init");
     if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
         util::error_sdl("SDL_image init");
@@ -31,13 +31,12 @@ flat::State::State() {
     steve = IMG_LoadTexture(rend, "../res/steve.png");
 
     std::iota(perm.begin(), perm.end(), 0);
-    std::shuffle(perm.begin(),
-                 perm.end(),
-                 std::default_random_engine(time(nullptr)));
+    std::shuffle(perm.begin(), perm.end(), std::default_random_engine(seed));
 
     for (int i = -4; i < 4; i++)
-        chunks.insert(
-            {i, std::make_unique<Chunk>(Chunk::build_terrain(i, perm))});
+        chunks.insert({i,
+                       std::make_unique<Chunk>(
+                           Chunk::build_terrain(i, perm, gen, dist))});
 
     player = Player(0.5, 60, chunks);
 }
@@ -58,13 +57,15 @@ void flat::State::update() {
 
     // Generate chunks at edge of world
     if (chunks.find(player.chunk_x - 3) == chunks.end()) {
-        chunks.insert({player.chunk_x - 3,
-                       std::make_unique<Chunk>(
-                           Chunk::build_terrain(player.chunk_x - 3, perm))});
+        chunks.insert(
+            {player.chunk_x - 3,
+             std::make_unique<Chunk>(
+                 Chunk::build_terrain(player.chunk_x - 3, perm, gen, dist))});
     } else if (chunks.find(player.chunk_x + 3) == chunks.end())
-        chunks.insert({player.chunk_x + 3,
-                       std::make_unique<Chunk>(
-                           Chunk::build_terrain(player.chunk_x + 3, perm))});
+        chunks.insert(
+            {player.chunk_x + 3,
+             std::make_unique<Chunk>(
+                 Chunk::build_terrain(player.chunk_x + 3, perm, gen, dist))});
 }
 
 void flat::State::change_block(const Coords &pos,
@@ -98,7 +99,13 @@ void flat::State::change_block(const Coords &pos,
                                  return e.first == type.value();
                              });
 
-            if (--it->second == 0) player.inventory.erase(it);
+            if (--it->second == 0) {
+                player.inventory.erase(it);
+                if (player.inventory.empty())
+                    player.focused_mat = std::nullopt;
+                else
+                    player.focused_mat = player.inventory.size() - 1;
+            }
         }
     } else {
         if (chunks.find(chunk_pos) != chunks.end()) {

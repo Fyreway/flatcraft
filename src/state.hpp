@@ -1,6 +1,8 @@
 #ifndef __STATE_H__
 #define __STATE_H__
 
+#include <random>
+
 #include <SDL.h>
 #include <SDL_ttf.h>
 
@@ -15,6 +17,9 @@ namespace flat {
         Player player;
         Chunks chunks;
 
+        int seed;
+        std::mt19937 gen;
+        std::uniform_int_distribution<int> dist;
         std::array<uint8_t, 256> perm;
 
         SDL_Window *win;
