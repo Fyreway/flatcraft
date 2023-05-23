@@ -4,6 +4,7 @@ project(SimplexNoise)
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
+find_package(SDL2_ttf REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -17,4 +18,4 @@ add_library(SimplexNoise ${SIMPLEXNOISE_SOURCES})
 
 target_include_directories(flatcraft PRIVATE src PUBLIC ${SDL2_INCLUDE_DIRS} SimplexNoise/src)
 
-target_link_libraries(flatcraft PUBLIC SDL2 SDL2_image SimplexNoise)
+target_link_libraries(flatcraft PUBLIC SDL2 SDL2_image SDL2_ttf SimplexNoise)

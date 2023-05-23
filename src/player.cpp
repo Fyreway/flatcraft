@@ -18,9 +18,8 @@ void flat::Player::update(const Chunks &chunks, int mx, int my) {
     update_pos(chunks);
     update_target(mx, my);
 
-    if (focused_type.has_value()
-        && focused_type.value() >= unlocked_types.size())
-        focused_type = std::nullopt;
+    if (focused_mat.has_value() && focused_mat.value() >= inventory.size())
+        focused_mat = std::nullopt;
 }
 
 void flat::Player::update_pos(const Chunks &chunks) {

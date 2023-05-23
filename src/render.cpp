@@ -1,3 +1,4 @@
+#include "SDL_surface.h"
 #include "state.hpp"
 
 #define SCALE       4
@@ -80,8 +81,9 @@ void flat::State::render_player() {
 }
 
 void flat::State::render_block_select() {
-    SDL_Rect src = get_block_texture(
-        player.unlocked_types.at(player.focused_type.value()).first);
+    std::pair<Block::Type, int> type =
+        player.inventory.at(player.focused_mat.value());
+    SDL_Rect src = get_block_texture(type.first);
     SDL_Rect dst{15, 15, PIXEL_SCALE / 2, PIXEL_SCALE / 2};
     SDL_Rect border{0, 0, PIXEL_SCALE / 2 + 30, PIXEL_SCALE / 2 + 30};
 
@@ -89,11 +91,25 @@ void flat::State::render_block_select() {
     SDL_SetRenderDrawBlendMode(rend, SDL_BLENDMODE_BLEND);
     SDL_RenderFillRect(rend, &border);
 
-    draw_block(rend,
-               atlas,
-               &src,
-               &dst,
-               player.unlocked_types.at(player.focused_type.value()).first);
+    draw_block(rend, atlas, &src, &dst, type.first);
+
+    SDL_Surface *surf =
+        TTF_RenderUTF8_Blended(font,
+                               std::to_string(type.second).c_str(),
+                               SDL_Color{255, 255, 255, 255});
+
+    SDL_Texture *tex = SDL_CreateTextureFromSurface(rend, surf);
+    SDL_FreeSurface(surf);
+
+    int w, h;
+
+    SDL_QueryTexture(tex, nullptr, nullptr, &w, &h);
+
+    SDL_Rect txtsrc{PIXEL_SCALE / 2 + 30 - w - 5, PIXEL_SCALE / 2, w, h};
+
+    SDL_RenderCopy(rend, tex, nullptr, &txtsrc);
+
+    SDL_DestroyTexture(tex);
 }
 
 void flat::State::render() {
@@ -106,7 +122,7 @@ void flat::State::render() {
 
     render_player();
 
-    if (player.focused_type.has_value()) render_block_select();
+    if (player.focused_mat.has_value()) render_block_select();
 
     SDL_RenderPresent(rend);
 }

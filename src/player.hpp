@@ -18,9 +18,9 @@ namespace flat {
 
         std::optional<Coords> targeted;
 
-        std::vector<std::pair<Block::Type, int>> unlocked_types;
+        std::vector<std::pair<Block::Type, int>> inventory;
 
-        std::optional<int> focused_type;
+        std::optional<int> focused_mat;
 
         Player() = default;
         Player(double x, double y, const Chunks &chunks);

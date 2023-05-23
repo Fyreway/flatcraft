@@ -2,6 +2,7 @@
 #define __STATE_H__
 
 #include <SDL.h>
+#include <SDL_ttf.h>
 
 #include "player.hpp"
 
@@ -19,6 +20,7 @@ namespace flat {
         SDL_Window *win;
         SDL_Renderer *rend;
         SDL_Texture *atlas, *steve;
+        TTF_Font *font;
 
         State();
         ~State();

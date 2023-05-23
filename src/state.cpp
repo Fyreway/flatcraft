@@ -10,6 +10,7 @@ flat::State::State() {
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) util::error_sdl("SDL init");
     if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
         util::error_sdl("SDL_image init");
+    if (TTF_Init() != 0) util::error_sdl("SDL_ttf init");
 
     win = SDL_CreateWindow("flatcraft",
                            SDL_WINDOWPOS_CENTERED,
@@ -21,6 +22,9 @@ flat::State::State() {
 
     rend = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
     if (rend == nullptr) util::error_sdl("renderer acquisition");
+
+    font = TTF_OpenFont("../res/opensans.ttf", 15);
+    if (font == nullptr) util::error_sdl("font opening");
 
     // TODO: normalize path
     atlas = IMG_LoadTexture(rend, "../res/terrain.png");
@@ -81,17 +85,21 @@ void flat::State::change_block(const Coords &pos,
 
         auto &chunk = chunks.at(chunk_pos);
 
-        chunk->blocks.emplace(
-            chunk->abnormalize_block_pos({x, y}),
-            Block(chunk->abnormalize_block_pos({x, y}), type.value()));
+        const Coords ab_pos = chunk->abnormalize_block_pos({x, y});
+        if (chunk->blocks.find(ab_pos) == chunk->blocks.end()) {
+            chunk->blocks.emplace(
+                chunk->abnormalize_block_pos({x, y}),
+                Block(chunk->abnormalize_block_pos({x, y}), type.value()));
 
-        auto it = std::find_if(player.unlocked_types.begin(),
-                               player.unlocked_types.end(),
-                               [type](const std::pair<Block::Type, int> &e) {
-                                   return e.first == type.value();
-                               });
+            auto it =
+                std::find_if(player.inventory.begin(),
+                             player.inventory.end(),
+                             [type](const std::pair<Block::Type, int> &e) {
+                                 return e.first == type.value();
+                             });
 
-        if (--it->second == 0) player.unlocked_types.erase(it);
+            if (--it->second == 0) player.inventory.erase(it);
+        }
     } else {
         if (chunks.find(chunk_pos) != chunks.end()) {
             auto &chunk = chunks.at(chunk_pos);
@@ -99,29 +107,30 @@ void flat::State::change_block(const Coords &pos,
             const auto &it = chunk->blocks.find(ab_pos);
             if (it != chunk->blocks.end()
                 && it->second.type != Block::Type::Bedrock) {
-                if (!std::any_of(player.unlocked_types.begin(),
-                                 player.unlocked_types.end(),
+                if (!std::any_of(player.inventory.begin(),
+                                 player.inventory.end(),
                                  [it](const std::pair<Block::Type, int> &e) {
                                      return e.first == it->second.type;
                                  }))
-                    player.unlocked_types.push_back({it->second.type, 1});
+                    player.inventory.push_back({it->second.type, 1});
                 else {
-                    auto jt = std::find_if(
-                        player.unlocked_types.begin(),
-                        player.unlocked_types.end(),
-                        [it](const std::pair<Block::Type, int> &e) {
-                            return e.first == it->second.type;
-                        });
-                    player.unlocked_types.at(jt - player.unlocked_types.begin())
+                    player.inventory
+                        .at(std::find_if(
+                                player.inventory.begin(),
+                                player.inventory.end(),
+                                [it](const std::pair<Block::Type, int> &e) {
+                                    return e.first == it->second.type;
+                                })
+                            - player.inventory.begin())
                         .second++;
                 }
-                player.focused_type =
-                    std::find_if(player.unlocked_types.begin(),
-                                 player.unlocked_types.end(),
+                player.focused_mat =
+                    std::find_if(player.inventory.begin(),
+                                 player.inventory.end(),
                                  [it](const std::pair<Block::Type, int> &e) {
                                      return e.first == it->second.type;
                                  })
-                    - player.unlocked_types.begin();
+                    - player.inventory.begin();
                 chunk->blocks.erase(ab_pos);
             }
             if (chunk->blocks.empty()) chunks.erase(chunk_pos);
