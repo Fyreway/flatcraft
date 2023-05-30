@@ -10,7 +10,7 @@ std::vector<int> get_near_chunks(const flat::Chunks &chunks,
 }
 
 flat::Player::Player(double x, double y, const Chunks &chunks) : x(x), y(y) {
-    chunk_x = trunc(x / 8);
+    chunk_x = floor(x / 8);
     near_chunks = get_near_chunks(chunks, *this);
 }
 
@@ -18,13 +18,11 @@ void flat::Player::update(const Chunks &chunks, int mx, int my) {
     update_pos(chunks);
     update_target(mx, my);
 
-    if (focused_mat.has_value() && focused_mat.value() >= inventory.size())
+    if (focused_mat.has_value() && focused_mat.value() >= blocks.size())
         focused_mat = std::nullopt;
 }
 
 void flat::Player::update_pos(const Chunks &chunks) {
-    // std::cout << "Player pos: " << x << ' ' << y << std::endl;
-
     chunk_x = floor(x / 8);
 
     if (chunks.find(chunk_x) == chunks.end()) {
@@ -68,8 +66,6 @@ void flat::Player::update_target(int mx, int my) {
                 ceil(-(my - 300) / 64.0) + ceil(y)};
     if (util::distance(targeted.value(), std::pair{x - 0.5, y + 1}) > 4)
         targeted.reset();
-    // std::cout << "Targeted: " << targeted->first << ' ' << targeted->second
-    //           << std::endl;
 }
 
 void flat::Player::move(const Chunks &chunks, double amount) {

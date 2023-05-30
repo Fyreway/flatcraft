@@ -18,7 +18,7 @@ namespace flat {
 
         std::optional<Coords> targeted;
 
-        std::vector<std::pair<Block::Type, int>> inventory;
+        std::vector<std::pair<Block::Type, int>> blocks;
 
         std::optional<int> focused_mat;
 

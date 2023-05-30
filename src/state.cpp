@@ -27,7 +27,7 @@ flat::State::State() : seed(time(nullptr)), gen(seed), dist(3, 5) {
     if (font == nullptr) util::error_sdl("font opening");
 
     // TODO: normalize path
-    atlas = IMG_LoadTexture(rend, "../res/terrain.png");
+    atlas = IMG_LoadTexture(rend, "../res/items.png");
     steve = IMG_LoadTexture(rend, "../res/steve.png");
 
     std::iota(perm.begin(), perm.end(), 0);
@@ -93,18 +93,18 @@ void flat::State::change_block(const Coords &pos,
                 Block(chunk->abnormalize_block_pos({x, y}), type.value()));
 
             auto it =
-                std::find_if(player.inventory.begin(),
-                             player.inventory.end(),
+                std::find_if(player.blocks.begin(),
+                             player.blocks.end(),
                              [type](const std::pair<Block::Type, int> &e) {
                                  return e.first == type.value();
                              });
 
             if (--it->second == 0) {
-                player.inventory.erase(it);
-                if (player.inventory.empty())
+                player.blocks.erase(it);
+                if (player.blocks.empty())
                     player.focused_mat = std::nullopt;
                 else
-                    player.focused_mat = player.inventory.size() - 1;
+                    player.focused_mat = player.blocks.size() - 1;
             }
         }
     } else {
@@ -114,30 +114,30 @@ void flat::State::change_block(const Coords &pos,
             const auto &it = chunk->blocks.find(ab_pos);
             if (it != chunk->blocks.end()
                 && it->second.type != Block::Type::Bedrock) {
-                if (!std::any_of(player.inventory.begin(),
-                                 player.inventory.end(),
+                if (!std::any_of(player.blocks.begin(),
+                                 player.blocks.end(),
                                  [it](const std::pair<Block::Type, int> &e) {
                                      return e.first == it->second.type;
                                  }))
-                    player.inventory.push_back({it->second.type, 1});
+                    player.blocks.push_back({it->second.type, 1});
                 else {
-                    player.inventory
+                    player.blocks
                         .at(std::find_if(
-                                player.inventory.begin(),
-                                player.inventory.end(),
+                                player.blocks.begin(),
+                                player.blocks.end(),
                                 [it](const std::pair<Block::Type, int> &e) {
                                     return e.first == it->second.type;
                                 })
-                            - player.inventory.begin())
+                            - player.blocks.begin())
                         .second++;
                 }
                 player.focused_mat =
-                    std::find_if(player.inventory.begin(),
-                                 player.inventory.end(),
+                    std::find_if(player.blocks.begin(),
+                                 player.blocks.end(),
                                  [it](const std::pair<Block::Type, int> &e) {
                                      return e.first == it->second.type;
                                  })
-                    - player.inventory.begin();
+                    - player.blocks.begin();
                 chunk->blocks.erase(ab_pos);
             }
             if (chunk->blocks.empty()) chunks.erase(chunk_pos);

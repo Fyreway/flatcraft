@@ -6,6 +6,21 @@ void flat::State::handle_events(bool &running) {
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
         case SDL_QUIT: running = false; break;
+        case SDL_MOUSEBUTTONDOWN:
+            switch (event.button.button) {
+            case SDL_BUTTON_LEFT:
+                if (player.targeted.has_value())
+                    change_block(player.targeted.value(), std::nullopt);
+                break;
+            case SDL_BUTTON_RIGHT:
+                if (player.targeted.has_value()) {
+                    if (player.focused_mat.has_value())
+                        change_block(
+                            player.targeted.value(),
+                            player.blocks.at(player.focused_mat.value()).first);
+                }
+                break;
+            }
         case SDL_KEYDOWN:
             switch (event.key.keysym.scancode) {
             case SDL_SCANCODE_SPACE:
@@ -16,8 +31,7 @@ void flat::State::handle_events(bool &running) {
                     if (player.focused_mat.has_value())
                         change_block(
                             player.targeted.value(),
-                            player.inventory.at(player.focused_mat.value())
-                                .first);
+                            player.blocks.at(player.focused_mat.value()).first);
                 }
                 break;
             case SDL_SCANCODE_Y:
@@ -40,7 +54,7 @@ void flat::State::handle_events(bool &running) {
                 break;
             case SDL_SCANCODE_RIGHT:
                 if (player.focused_mat.has_value()
-                    && player.focused_mat.value() < player.inventory.size() - 1)
+                    && player.focused_mat.value() < player.blocks.size() - 1)
                     player.focused_mat.value()++;
                 break;
             default: break;

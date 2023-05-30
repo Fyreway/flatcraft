@@ -10,11 +10,9 @@ SDL_Rect scale(const SDL_Rect &src, int scale) {
 }
 
 SDL_Rect get_block_texture(flat::Block::Type type) {
-    return scale({static_cast<int>(type) % BLOCK_SIZE,
-                  static_cast<int>(type) / BLOCK_SIZE,
-                  1,
-                  1},
-                 BLOCK_SIZE);
+    return scale(
+        {static_cast<int>(type) % 32, static_cast<int>(type) / 32, 1, 1},
+        BLOCK_SIZE);
 }
 
 SDL_Rect get_block_render_pos(const flat::Player &player,
@@ -82,7 +80,7 @@ void flat::State::render_player() {
 
 void flat::State::render_block_select() {
     std::pair<Block::Type, int> type =
-        player.inventory.at(player.focused_mat.value());
+        player.blocks.at(player.focused_mat.value());
     SDL_Rect src = get_block_texture(type.first);
     SDL_Rect dst{15, 15, PIXEL_SCALE / 2, PIXEL_SCALE / 2};
     SDL_Rect border{0, 0, PIXEL_SCALE / 2 + 30, PIXEL_SCALE / 2 + 30};
